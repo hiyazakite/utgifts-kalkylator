@@ -1,8 +1,6 @@
-# Mantine + Vite template
+# Utgiftskalkylator
 
-Official [Mantine](https://mantine.dev/) + [Vite](https://vitejs.dev/) template.
+Base : React + Mantine, with Vite. (forked vite-mantine official template)
 
-Links:
-
-- [Mantine documentation](https://mantine.dev/)
-- [Vite documentation](https://vitejs.dev/)
+Detta är en applikation som ska underlätta uppdelningen av kostnader under
+föräldraledighet.
