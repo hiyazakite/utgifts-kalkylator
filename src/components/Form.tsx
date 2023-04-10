@@ -8,25 +8,38 @@ import {
 } from "@mantine/core";
 import { MonthPicker } from "@mantine/dates";
 import "dayjs/locale/sv";
-
 import { useForm } from "@mantine/form";
+import { useEffect } from "react";
 export function Form({
 	handleForm,
 	persons,
-	addPerson,
+	upsertPerson,
 	date,
 	setDate,
 }: {
 	handleForm: (values: { name: string; price?: number; type: string }) => void;
 	persons: Person[];
-	addPerson: (
+	upsertPerson: (
 		name: string,
-		baseSalary?: number,
-		currentSalary?: number,
+		baseSalary: number,
+		currentSalary: number,
 	) => void;
 	date: Date;
 	setDate: (date: Date) => void;
 }) {
+	useEffect(() => {
+		personForm.setFieldValue(
+			"baseSalary",
+			persons.find((person) => person.name === personForm.values.name)
+				?.baseSalary,
+		);
+		personForm.setFieldValue(
+			"currentSalary",
+			persons
+				.find((person) => person.name === personForm.values.name)
+				?.getCurrentSalary(date),
+		);
+	}, [date]);
 	const expenseForm = useForm({
 		initialValues: {
 			name: "",
@@ -48,15 +61,16 @@ export function Form({
 				if (!value) {
 					return "Du måste ange ett pris";
 				}
+				if (value < 0) {
+					return "Priset måste vara positivt";
+				}
 			},
 		},
 	});
 
-	const personForm = useForm({
+	const personForm = useForm<PersonValues>({
 		initialValues: {
 			name: "",
-			baseSalary: undefined,
-			currentSalary: undefined,
 		},
 		validate: {
 			name: (value) => {
@@ -86,22 +100,59 @@ export function Form({
 			<Grid.Col span={4} pr={20}>
 				<form
 					onSubmit={personForm.onSubmit((values) => {
-						addPerson(values.name, values.baseSalary, values.currentSalary);
+						if (values.baseSalary && values.currentSalary) {
+							upsertPerson(
+								values.name,
+								values.baseSalary,
+								values.currentSalary,
+							);
+						}
 					})}
 				>
-					<Title order={3}>Lägg till en person</Title>
-					<TextInput
+					<Title order={3}>Lägg till/ändra en person</Title>
+					<Select
 						label="Namn"
+						placeholder="Lägg till ny eller välj befintlig"
 						mt={10}
 						{...personForm.getInputProps("name")}
+						data={persons.map((person) => {
+							return {
+								label: person.name,
+								value: person.name,
+							};
+						})}
+						creatable
+						getCreateLabel={(name) => `+ Lägg till ${name}`}
+						searchable
+						onCreate={(name) => {
+							upsertPerson(name, 0, 0);
+							personForm.setFieldValue("baseSalary", 0);
+							personForm.setFieldValue("currentSalary", 0);
+							return name;
+						}}
+						onSelect={(evt) => {
+							//Find the person in the persons array
+							const name = evt.currentTarget.value;
+							const person = persons.find((person) => person.name === name);
+							//If the person exists, set the baseSalary and currentSalary to the values of the person
+							console.log(person);
+							if (person) {
+								personForm.setFieldValue("baseSalary", person.baseSalary);
+								personForm.setFieldValue(
+									"currentSalary",
+									person.getCurrentSalary(date),
+								);
+							}
+						}}
 					/>
+
 					<NumberInput
 						label="Grundlön"
 						mt={10}
 						{...personForm.getInputProps("baseSalary")}
 					/>
 					<NumberInput
-						label="Nuvarande lön"
+						label="Aktuell månadslön"
 						mt={10}
 						{...personForm.getInputProps("currentSalary")}
 					/>
