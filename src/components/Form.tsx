@@ -157,7 +157,7 @@ export function Form({
 						{...personForm.getInputProps("currentSalary")}
 					/>
 					<Button type="submit" variant="outline" mt={15}>
-						Lägg till
+						Lägg till / ändra
 					</Button>
 				</form>
 			</Grid.Col>

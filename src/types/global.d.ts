@@ -17,6 +17,7 @@ interface Person {
 	addExpense: (expense: Expense) => void;
 	getExpenses: (date?: Date) => Expense[];
 	removeExpense: (expense: Expense) => void;
+	salaryDiff: (date: Date) => number;
 }
 
 interface PersonValues {

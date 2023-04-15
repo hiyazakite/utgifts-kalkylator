@@ -6,6 +6,11 @@ export class Person {
 		amount: number;
 		date: Date;
 	}[];
+	extraMonthlyIncome: {
+		name: string;
+		amount: number;
+		date: Date;
+	}[];
 	constructor(name: string, baseSalary?: number, currentSalary?: number) {
 		this.name = name;
 		this.baseSalary = baseSalary;
@@ -15,6 +20,7 @@ export class Person {
 				date: new Date(),
 			},
 		];
+		this.extraMonthlyIncome = [];
 		this.expenses = [];
 	}
 
@@ -69,6 +75,22 @@ export class Person {
 				date,
 			});
 		}
+	};
+
+	addExtraIncome = (name: string, amount: number, date: Date): void => {
+		/**
+		 * Add an extra side income to the person's monthly salaries
+		 *
+		 * @param amount - The amount of the income
+		 * @param date - The date of the income
+		 * @returns void
+		 *
+		 * */
+		this.extraMonthlyIncome.push({
+			name,
+			amount,
+			date,
+		});
 	};
 
 	getCurrentSalary = (date: Date): number => {
@@ -136,5 +158,14 @@ export class Person {
 		 */
 
 		this.expenses = this.expenses.filter((e) => e !== expense);
+	};
+
+	salaryDiff = (date: Date): number => {
+		/**
+		 * Calculate the percentage difference between the current salary and the base salary
+		 */
+		const currentSalary = this.getCurrentSalary(date);
+		const baseSalary = this.baseSalary || 0;
+		return (currentSalary - baseSalary) / baseSalary;
 	};
 }

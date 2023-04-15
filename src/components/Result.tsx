@@ -1,10 +1,8 @@
 import { Box, Table, Title } from "@mantine/core";
+import { summarize } from "../utils/summarize";
 
 export function Result({ persons, date }: { persons: Person[]; date: Date }) {
-	const reducedIncomeRatio = (baseSalary: number, currentSalary: number) => {
-		return currentSalary / baseSalary;
-	};
-
+	const sum = summarize(persons, date);
 	return (
 		<Box mt={20}>
 			<Title order={3}>Kalkyl</Title>
@@ -14,7 +12,7 @@ export function Result({ persons, date }: { persons: Person[]; date: Date }) {
 						<th>Namn</th>
 						<th>Grundlön</th>
 						<th>Aktuell månadslön</th>
-						<th>Andel av grundlön</th>
+						<th>Ändring från grundlön</th>
 						<th>Totala utgifter</th>
 						<th>Kvarstående</th>
 					</tr>
@@ -26,16 +24,7 @@ export function Result({ persons, date }: { persons: Person[]; date: Date }) {
 								<td>{person.name}</td>
 								<td>{person.baseSalary}</td>
 								<td>{person.getCurrentSalary(date)}</td>
-								<td>
-									{person.baseSalary && person.getCurrentSalary(date)
-										? `${(
-												reducedIncomeRatio(
-													person.baseSalary,
-													person.getCurrentSalary(date),
-												) * 100
-										  ).toFixed(2)}%`
-										: ""}
-								</td>
+								<td>{(person.salaryDiff(date) * 100).toFixed(2)}%</td>
 								<td>{person.totalCost(date)}</td>
 								<td>
 									{person.getCurrentSalary(date)
@@ -49,41 +38,21 @@ export function Result({ persons, date }: { persons: Person[]; date: Date }) {
 				<tfoot>
 					<tr>
 						<th>Resultat</th>
-						<th>
-							{persons.reduce((acc, person) => {
-								if (person.baseSalary) {
-									return acc + person.baseSalary;
-								}
-								return acc;
-							}, 0)}
-						</th>
-						<th>
-							{persons.reduce((acc, person) => {
-								if (person.getCurrentSalary(date)) {
-									return acc + person.getCurrentSalary(date);
-								}
-								return acc;
-							}, 0)}
-						</th>
-						<th>-</th>
-						<th>
-							{persons.reduce((acc, person) => {
-								return acc + person.totalCost(date);
-							}, 0)}
-						</th>
-						<th>
-							{persons.reduce((acc, person) => {
-								if (person.getCurrentSalary(date)) {
-									return (
-										acc + person.getCurrentSalary(date) - person.totalCost(date)
-									);
-								}
-								return acc;
-							}, 0)}
-						</th>
+						<th>{sum.baseSalary}</th>
+						<th>{sum.currentSalary}</th>
+						<th>{(sum.salaryDiff() * 100).toFixed(2)}%</th>
+						<th>{sum.totalCost}</th>
+						<th>{sum.remaining}</th>
 					</tr>
 				</tfoot>
 			</Table>
+			{sum.splitCosts().map((person) => {
+				return (
+					<div>
+						{person.name} ska betala {person.splitCost} kronor
+					</div>
+				);
+			})}
 		</Box>
 	);
 }
