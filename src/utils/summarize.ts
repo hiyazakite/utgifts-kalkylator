@@ -7,7 +7,7 @@ export const summarize = (
 	salaryDiff: () => number;
 	totalCost: number;
 	remaining: number;
-	splitCosts: () => Array<{ name: string; splitCost: number }>;
+	splitCosts: () => Array<SplitCost>;
 } => {
 	return {
 		baseSalary: persons.reduce((acc, person) => {
@@ -34,37 +34,28 @@ export const summarize = (
 			}
 			return acc;
 		}, 0),
-		splitCosts() {
-			let splits: {
-				name: string;
-				splitCost: number;
-			}[] = [];
+		splitCosts(): SplitCost[] {
+			let splits: SplitCost[] = [];
 			persons.reduce((acc, person, index) => {
-				if (person.salaryDiff(date)) {
-					const reducedSalary = 1 + person.salaryDiff(date);
-					splits.push({
-						name: person.name,
-						splitCost: reducedSalary,
+				const reducedSalary = 1 + person.salaryDiff(date);
+				splits.push({
+					name: person.name,
+					splitCost: reducedSalary,
+				});
+				if (index === persons.length - 1) {
+					const sumSplits = acc + reducedSalary;
+					splits = splits.map((person) => {
+						return {
+							name: person.name,
+							splitCost: (
+								(person.splitCost / sumSplits) *
+								this.totalCost
+							).toFixed(0) as unknown as number,
+						};
 					});
-					if (index === persons.length - 1) {
-						const total = acc + reducedSalary;
-						splits = splits.map((person) => {
-							return {
-								name: person.name,
-								splitCost: (
-									(person.splitCost / total) *
-									this.totalCost
-								).toFixed(0) as unknown as number,
-							};
-						});
-					}
-					return acc + reducedSalary;
 				}
-				return acc;
+				return acc + reducedSalary;
 			}, 0);
-
-			console.log(splits);
-
 			return splits;
 		},
 	};

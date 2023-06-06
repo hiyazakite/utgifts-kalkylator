@@ -20,7 +20,7 @@ export function Result({ persons, date }: { persons: Person[]; date: Date }) {
 				<tbody>
 					{persons.map((person) => {
 						return (
-							<tr>
+							<tr key={person.name}>
 								<td>{person.name}</td>
 								<td>{person.baseSalary}</td>
 								<td>{person.getCurrentSalary(date)}</td>
@@ -46,13 +46,18 @@ export function Result({ persons, date }: { persons: Person[]; date: Date }) {
 					</tr>
 				</tfoot>
 			</Table>
-			{sum.splitCosts().map((person) => {
-				return (
-					<div>
-						{person.name} ska betala {person.splitCost} kronor
-					</div>
-				);
-			})}
+			<Title order={3} mt={20}>
+				Fördelning av kostnader
+			</Title>
+			<ul>
+				{sum.splitCosts().map((person) => {
+					return (
+						<li>
+							{person.name} ska betala {person.splitCost} kronor
+						</li>
+					);
+				})}
+			</ul>
 		</Box>
 	);
 }

@@ -46,7 +46,7 @@ export function List({
 					</Tabs.List>
 					{filteredPersons.map((person) => {
 						return (
-							<Tabs.Panel value={person.name}>
+							<Tabs.Panel value={person.name} key={person.name}>
 								<Box>
 									<Table>
 										<thead>

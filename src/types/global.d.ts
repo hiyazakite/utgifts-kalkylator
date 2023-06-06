@@ -25,3 +25,8 @@ interface PersonValues {
 	baseSalary?: number;
 	currentSalary?: number;
 }
+
+interface SplitCost {
+	name: string;
+	splitCost: number;
+}
