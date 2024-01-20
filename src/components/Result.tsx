@@ -3,7 +3,9 @@ import { summarize } from "../utils/summarize";
 
 export function Result({ persons, date }: { persons: Person[]; date: Date }) {
 	const sum = summarize(persons, date);
-	return (
+
+    if (persons.length > 0) {
+        return (
 		<Box mt={20}>
 			<Title order={3}>Kalkyl</Title>
 			<Table>
@@ -60,4 +62,15 @@ export function Result({ persons, date }: { persons: Person[]; date: Date }) {
 			</ul>
 		</Box>
 	);
+    }
+    else {
+        return (
+            <Box mt={20}>
+                <Title order={3}>Kalkyl</Title>
+                <p>Inga personer eller utgifter är tillagda</p>
+            </Box>
+
+        )
+    }
+	
 }
