@@ -6,7 +6,7 @@ Detta är en applikation som ska underlätta uppdelningen av kostnader under
 föräldraledighet.
 
 
-#TODO
+# TODO
 
 1. Finslipa formeln och eventuell lägg till olika formler för uppdelning av kostnader
 2. Lägg till ta bort och ändra i utgifter och personer.
