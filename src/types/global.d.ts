@@ -1,13 +1,18 @@
 interface Expense {
 	type: string;
-	price: number;
+	price: number ;
 	date: Date;
+}
+interface ExpenseValues {
+    name: string,
+	type: string;
+	price?: number | "" ;
 }
 
 interface Person {
 	name: string;
 	expenses: Expense[];
-	baseSalary?: number;
+	baseSalary?: number ;
 	monthlySalaries: {
 		amount: number;
 		date: Date;
@@ -22,8 +27,8 @@ interface Person {
 
 interface PersonValues {
 	name: string;
-	baseSalary?: number;
-	currentSalary?: number;
+	baseSalary?: number | "";
+	currentSalary?: number | "";
 }
 
 interface SplitCost {
