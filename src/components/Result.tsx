@@ -55,7 +55,7 @@ export function Result({ persons, date }: { persons: Person[]; date: Date }) {
 				{sum.splitCosts().map((person) => {
 					return (
 						<li>
-							{person.name} ska betala {person.splitCost} kronor
+							{person.name} ska { person.splitCost < person.totalCost ? 'få tillbaka' : 'betala'} { Math.abs(person.splitCost - person.totalCost)} kronor (Utgifts del {person.splitCost} kronor justerat för egna utgifter {person.totalCost} kronor)
 						</li>
 					);
 				})}

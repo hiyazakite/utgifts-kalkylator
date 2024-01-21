@@ -41,6 +41,7 @@ export const summarize = (
 				splits.push({
 					name: person.name,
 					splitCost: reducedSalary,
+                    totalCost: person.totalCost(date)
 				});
 				if (index === persons.length - 1) {
 					const sumSplits = acc + reducedSalary;
@@ -51,6 +52,7 @@ export const summarize = (
 								(person.splitCost / sumSplits) *
 								this.totalCost
 							).toFixed(0) as unknown as number,
+                            totalCost: person.totalCost
 						};
 					});
 				}

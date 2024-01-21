@@ -29,4 +29,5 @@ interface PersonValues {
 interface SplitCost {
 	name: string;
 	splitCost: number;
+    totalCost: number;
 }

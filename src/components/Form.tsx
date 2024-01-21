@@ -147,12 +147,12 @@ export function Form({
 					/>
 
 					<NumberInput
-						label="Grundlön"
+						label="Grundlön efter skatt"
 						mt={10}
 						{...personForm.getInputProps("baseSalary")}
 					/>
 					<NumberInput
-						label="Aktuell månadslön"
+						label="Aktuell månadslön efter skatt"
 						mt={10}
 						{...personForm.getInputProps("currentSalary")}
 					/>
