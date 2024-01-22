@@ -1,33 +1,27 @@
-import {
-    Grid,
-    Title,
-    TextInput,
-    NumberInput,
-    Button,
-    Select,
-} from "@mantine/core";
+import React, { SyntheticEvent, useEffect } from "react";
+import { Grid, Title, TextInput, NumberInput, Button, Select } from "@mantine/core";
 import { MonthPicker } from "@mantine/dates";
 import "dayjs/locale/sv";
 import { useForm } from "@mantine/form";
-import { useEffect } from "react";
+
+
 export function Form({
     handleForm,
     persons,
     upsertPerson,
     date,
     setDate,
+    activePerson,
+    setActivePerson,
 }: {
     handleForm: (values: { name: string; price?: number | ""; type: string }) => void;
     persons: Person[];
-    upsertPerson: (
-        name: string,
-        baseSalary: number,
-        currentSalary: number,
-    ) => void;
+    upsertPerson: (name: string, baseSalary: number, currentSalary: number) => void;
     date: Date;
     setDate: (date: Date) => void;
+    activePerson: string | null;
+    setActivePerson: (personName: string | null) => void;
 }) {
-
     const expenseForm = useForm<ExpenseValues>({
         initialValues: {
             name: "",
@@ -35,23 +29,13 @@ export function Form({
             type: "",
         },
         validate: {
-            name: (value) => {
-                if (!value.trim()) {
-                    return "Du måste ange ett namn";
-                }
-            },
-            type: (value) => {
-                if (!value.trim()) {
-                    return "Du måste ange en utgiftstyp";
-                }
-            },
+            name: (value) => (!value.trim() ? "Du måste ange ett namn" : undefined),
+            type: (value) => (!value.trim() ? "Du måste ange en utgiftstyp" : undefined),
             price: (value) => {
                 if (!value) {
                     return "Du måste ange ett pris";
                 }
-                if (value < 0) {
-                    return "Priset måste vara positivt";
-                }
+                return value < 0 ? "Priset måste vara positivt" : undefined;
             },
         },
     });
@@ -61,50 +45,60 @@ export function Form({
             name: "",
         },
         validate: {
-            name: (value) => {
-                if (!value.trim()) {
-                    return "Du måste ange ett namn";
-                }
-            },
-            baseSalary: (value) => {
-                if (!value) {
-                    return "Du måste ange grundlön";
-                }
-            },
-            currentSalary: (value) => {
-                if (!value) {
-                    return "Du måste ange nuvarande lön";
-                }
-            },
+            name: (value) => (!value.trim() ? "Du måste ange ett namn" : undefined),
+            baseSalary: (value) => (!value || value <= 0 ? "Du måste ange grundlön" : undefined),
+            currentSalary: (value) => (!value || value <= 0 ? "Du måste ange nuvarande lön" : undefined),
         },
     });
 
     useEffect(() => {
-        personForm.setFieldValue(
-            "baseSalary",
-            persons.find((person) => person.name === personForm.values.name)
-                ?.baseSalary,
-        );
-        personForm.setFieldValue(
-            "currentSalary",
-            persons
-                .find((person) => person.name === personForm.values.name)
-                ?.getCurrentSalary(date),
-        );
-
+        const selectedPerson = persons.find((person) => person.name === personForm.values.name);
+        personForm.setFieldValue("baseSalary", selectedPerson?.baseSalary || "");
+        personForm.setFieldValue("currentSalary", selectedPerson?.getCurrentSalary(date) || "");
     }, [date]);
 
     useEffect(() => {
-        // Check if the selected person is removed from the list
-        if (personForm.values.name && !persons.find((person) => person.name === personForm.values.name)) {
-            personForm.setFieldValue("name", "")
-            personForm.setFieldValue("baseSalary", "");
-            personForm.setFieldValue("currentSalary", "");
-            expenseForm.setFieldValue("name", "");
-            expenseForm.setFieldValue("type", "");
-            expenseForm.setFieldValue("price", "")
+        if (!persons.find((person) => person.name === personForm.values.name)) {
+            resetForms();
         }
     }, [persons, personForm.values.name]);
+
+    useEffect(() => {
+        handleActivePersonChange();
+    }, [activePerson, personForm.values.name]);
+
+    const resetForms = () => {
+        personForm.setValues({ name: "", baseSalary: "", currentSalary: "" });
+        expenseForm.setValues({ name: "", type: "", price: "" });
+    };
+
+    const handleActivePersonChange = () => {
+        if (activePerson && activePerson !== personForm.values.name) {
+            const person = persons.find((p) => p.name === activePerson);
+            if (person) {
+                personForm.setValues({
+                    name: person.name,
+                    baseSalary: person.baseSalary,
+                    currentSalary: person.getCurrentSalary(date),
+                });
+                expenseForm.setValues({
+                    name: person.name,
+                });
+            } else {
+                setActivePerson(personForm.values.name);
+            }
+        }
+    };
+
+    const handlePersonFormSubmit = (values: PersonValues) => {
+        if (values.baseSalary && values.currentSalary) {
+            upsertPerson(values.name, values.baseSalary, values.currentSalary);
+        }
+    };
+
+    const handleExpenseFormSubmit = (values: ExpenseValues) => {
+        handleForm(values);
+    };
 
     return (
         <Grid mt={10}>
@@ -115,13 +109,7 @@ export function Form({
             <Grid.Col span={4} pr={20}>
                 <form
                     onSubmit={personForm.onSubmit((values) => {
-                        if (values.baseSalary && values.currentSalary) {
-                            upsertPerson(
-                                values.name,
-                                values.baseSalary,
-                                values.currentSalary,
-                            );
-                        }
+                        handlePersonFormSubmit(values);
                     })}
                 >
                     <Title order={3}>Lägg till/ändra en person</Title>
@@ -130,12 +118,10 @@ export function Form({
                         placeholder="Lägg till ny eller välj befintlig"
                         mt={10}
                         {...personForm.getInputProps("name")}
-                        data={persons.map((person) => {
-                            return {
-                                label: person.name,
-                                value: person.name,
-                            };
-                        })}
+                        data={persons.map((person) => ({
+                            label: person.name,
+                            value: person.name,
+                        }))}
                         creatable
                         getCreateLabel={(name) => `+ Lägg till ${name}`}
                         searchable
@@ -145,26 +131,11 @@ export function Form({
                             personForm.setFieldValue("currentSalary", 0);
                             return name;
                         }}
-                        onSelect={(evt) => {
-                            //Find the person in the persons array
-                            const name = evt.currentTarget.value;
-                            const person = persons.find((person) => person.name === name);
-                            //If the person exists, set the baseSalary and currentSalary to the values of the person
-                            if (person) {
-                                personForm.setFieldValue("baseSalary", person.baseSalary);
-                                personForm.setFieldValue(
-                                    "currentSalary",
-                                    person.getCurrentSalary(date),
-                                );
-                            }
-                        }}
+                        onSelect={(evt) => handleSelect(evt)}
+                        onChange={(name) => handleSelectChange(name)}
                     />
 
-                    <NumberInput
-                        label="Grundlön efter skatt"
-                        mt={10}
-                        {...personForm.getInputProps("baseSalary")}
-                    />
+                    <NumberInput label="Grundlön efter skatt" mt={10} {...personForm.getInputProps("baseSalary")} />
                     <NumberInput
                         label="Aktuell månadslön efter skatt"
                         mt={10}
@@ -178,34 +149,24 @@ export function Form({
             <Grid.Col span={4} pr={20}>
                 <form
                     onSubmit={expenseForm.onSubmit((values) => {
-                        handleForm(values);
+                        handleExpenseFormSubmit(values);
                     })}
                 >
                     <Title order={3}>Lägg till en utgift</Title>
                     <Select
                         label="Välj en person"
-                        placeholder={
-                            persons.length > 0 ? "Välj en person" : "Skapa en person först"
-                        }
-                        data={persons.map((person) => {
-                            return {
-                                label: person.name,
-                                value: person.name,
-                            };
-                        })}
+                        placeholder={persons.length > 0 ? "Välj en person" : "Skapa en person först"}
+                        data={persons.map((person) => ({
+                            label: person.name,
+                            value: person.name,
+                        }))}
                         {...expenseForm.getInputProps("name")}
                         mt={10}
+                        onSelect={(evt) => handleSelect(evt)}
+                        onChange={(name) => handleSelectChange(name)}
                     />
-                    <TextInput
-                        label="Utgiftstyp"
-                        mt={10}
-                        {...expenseForm.getInputProps("type")}
-                    />
-                    <NumberInput
-                        label="Pris"
-                        mt={10}
-                        {...expenseForm.getInputProps("price")}
-                    />
+                    <TextInput label="Utgiftstyp" mt={10} {...expenseForm.getInputProps("type")} />
+                    <NumberInput label="Pris" mt={10} {...expenseForm.getInputProps("price")} />
                     <Button type="submit" variant="outline" mt={15}>
                         Lägg till
                     </Button>
@@ -213,4 +174,21 @@ export function Form({
             </Grid.Col>
         </Grid>
     );
+
+    function handleSelect(evt: SyntheticEvent<HTMLInputElement, Event>) {
+        const name = evt.currentTarget.value;
+        const person = persons.find((person) => person.name === name);
+        if (person) {
+            setActivePerson(person.name);
+            personForm.setFieldValue("baseSalary", person.baseSalary);
+            personForm.setFieldValue("currentSalary", person.getCurrentSalary(date));
+        }
+    }
+
+    function handleSelectChange(name: string | null) {
+        const person = persons.find((person) => person.name === name);
+        if (person) {
+            setActivePerson(name);
+        }
+    }
 }

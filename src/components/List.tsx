@@ -1,22 +1,27 @@
-import { Title, Table, Box, Tabs, Button } from "@mantine/core";
-import { IconUser } from "@tabler/icons-react";
+import { Title, Table, Box, Tabs, Button, ActionIcon, } from "@mantine/core";
+import { IconUser, IconAdjustments, IconEdit, IconRowRemove } from "@tabler/icons-react";
 import { useState, useEffect } from 'react';
 
 export function List({
     persons,
     removePerson,
+    activePerson,
+    setActivePerson,
+    removeExpense,
     date,
     monthName,
 }: {
     persons: Person[];
-    removePerson: (person: string) => void;
+    removePerson: (personName: string) => void;
+    activePerson: string | null,
+    setActivePerson: (personName: string | null) => void
+    removeExpense: (person: Person, id: number) => void
     date: Date;
     monthName: string;
 }) {
     //return only persons with expenses in the current month
     const [filteredPersons, setFilteredPersons] = useState<Person[]>([]);
 
-    const [activePerson, setActivePerson] = useState<string | null>('');
 
     useEffect(() => {
         // Filter persons with expenses in the current month
@@ -34,6 +39,7 @@ export function List({
             setActivePerson(null);
         }
     }, [persons, date]);
+
     return (
 
 
@@ -51,7 +57,7 @@ export function List({
                     value={activePerson}
                 >
                     <Tabs.List>
-                        {filteredPersons.map((person) => {
+                        {persons.map((person) => {
                             return (
                                 <Tabs.Tab key={person.name} value={person.name} icon={<IconUser size="1.5rem" />}>
                                     {person.name}
@@ -61,7 +67,7 @@ export function List({
                         <Button variant="filled" color="red" style={{ marginLeft: 'auto' }} onClick={() => activePerson ? removePerson(activePerson) : ''}>Ta bort {activePerson}</Button>
                     </Tabs.List>
                     <div>
-                        {filteredPersons.map((person) => {
+                        {persons.map((person) => {
                             return (
                                 <Tabs.Panel key={person.name} value={person.name}>
                                     <Box>
@@ -70,22 +76,34 @@ export function List({
                                                 <tr>
                                                     <th>Utgiftstyp</th>
                                                     <th>Kostnad</th>
+                                                    <th></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {person.getExpenses(date).map((expense) => {
+                                                {person.getExpenses(date).length > 0 ? person.getExpenses(date).map((expense) => {
                                                     return (
                                                         <tr>
                                                             <td>{expense.type}</td>
                                                             <td>{expense.price}</td>
+                                                            <td style={{ display: "flex", justifyContent: "end" }}>
+                                                                <ActionIcon mr="0.5rem">
+                                                                    <IconEdit size="1.125rem" />
+                                                                </ActionIcon>
+                                                                <ActionIcon onClick={() => {
+                                                                    removeExpense(person, expense.id)
+                                                                }}  >
+                                                                    <IconRowRemove size="1.125rem" color="#e03131" />
+                                                                </ActionIcon>
+                                                            </td>
                                                         </tr>
                                                     );
-                                                })}
+                                                }) : <tr><td>Inga utgifter registrerade för {person.name} för denna månad</td><td></td></tr>}
                                             </tbody>
                                             <tfoot>
                                                 <tr>
                                                     <th>Total kostnad</th>
                                                     <th>{person.totalCost(date)}</th>
+                                                    <th></th>
                                                 </tr>
                                             </tfoot>
                                         </Table>
@@ -93,6 +111,7 @@ export function List({
                                 </Tabs.Panel>
                             );
                         })}
+
                     </div>
                 </Tabs>
             )
