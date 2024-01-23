@@ -12,6 +12,7 @@ export default function App() {
     const [persons, setPersons] = useState<Person[]>([]);
     const [date, setDate] = useState<Date>(new Date());
     const [activePerson, setActivePerson] = useState<string | null>('');
+    const [household, setHousehold] = useState<string>('Franzéngatan 39');
 
     const month = (date: Date, locale: string = "sv") => {
         const monthIndex = dayjs(date).month();
@@ -63,19 +64,35 @@ export default function App() {
     };
 
     const removeExpense = (person: Person, id: number) => {
-        person.removeExpense(id);
-
-        //React doesn't register changes in nested properties of persons object, hence a manual update is needed
-        const updatedPersons = [...persons];
-        const personIndex = updatedPersons.findIndex((p) => p.name === person.name);
-        updatedPersons[personIndex] = person;
-        setPersons(updatedPersons);
+        setPersons((prevPersons) => {
+            const updatedPersons = prevPersons.map((p) => {
+                if (p.name === person.name) {
+                    p.removeExpense(id);
+                }
+                return p;
+            });
+            return updatedPersons;
+        });
     };
+
+    const updateExpense = (person: Person, expense: Expense) => {
+        setPersons((prevPersons) => {
+            const updatedPersons = prevPersons.map((p) => {
+                if (p.name === person.name) {
+                    p.updateExpense(expense);
+                }
+                return p;
+            });
+            return updatedPersons;
+        });
+    };
+
 
     return (
         <ThemeProvider>
             <Container size="md" mt={30}>
                 <Title order={1}>Utgiftskalkylatorn</Title>
+                <Title order={2} mt="xs">Hushållsbudget för {household}</Title>
                 <Form
                     {...{
                         persons,
@@ -93,6 +110,7 @@ export default function App() {
                         removePerson,
                         activePerson,
                         setActivePerson,
+                        updateExpense,
                         removeExpense,
                         date,
                         monthName: month(date),

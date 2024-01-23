@@ -23,6 +23,7 @@ interface Person {
     totalCost: (date?: Date) => number;
     addExpense: (expense: Expense) => void;
     getExpenses: (date?: Date) => Expense[];
+    updateExpense: (expense: Expense) => void;
     removeExpense: (id: number) => void;
     salaryDiff: (date: Date) => number;
 }

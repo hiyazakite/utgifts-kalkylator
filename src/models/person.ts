@@ -151,14 +151,34 @@ export class Person {
     };
 
     removeExpense(id: number): void {
+        /**
+         * Remove an expense from the person's expenses
+         * @param id - The id of the expense to remove
+         * @returns void
+         * 
+         */
         this.expenses = this.expenses.filter(
             (expense) => expense.id !== id
+        );
+    }
+
+    updateExpense(updatedExpense: Expense): void {
+        /** 
+         * Update an expense in the person's expenses
+         * @param updatedExpense - The updated expense
+         * @returns void
+         * 
+         */
+        this.expenses = this.expenses.map((expense) =>
+            expense.id === updatedExpense.id ? updatedExpense : expense
         );
     }
 
     salaryDiff = (date: Date): number => {
         /**
          * Calculate the percentage difference between the current salary and the base salary
+         * @param date - The date to get the salary for
+         * @returns The percentage difference between the current salary and the base salary
          */
         const currentSalary = this.getCurrentSalary(date);
         const baseSalary = this.baseSalary || 0;
