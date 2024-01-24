@@ -20,24 +20,6 @@ export default function App() {
         return monthName;
     };
 
-    const handleForm = (values: {
-        name: string;
-        price?: number | ""; // "" is required to clear the search field on state change
-        type: string;
-    }) => {
-        const person = persons.find((person) => person.name === values.name);
-        if (person) {
-            person.addExpense({
-                id: Date.now(),
-                type: values.type,
-                price: values.price || 0,
-                date: date,
-            });
-        }
-        setPersons([...persons]);
-        person ? setActivePerson(person.name) : "";
-    };
-
     const upsertPerson = (
         name: string,
         baseSalary?: number,
@@ -92,11 +74,11 @@ export default function App() {
         <ThemeProvider>
             <Container size="md" mt={30}>
                 <Title order={1}>Utgiftskalkylatorn</Title>
-                <Title order={2} mt="xs">Hushållsbudget för {household}</Title>
+                <Title order={5} mt="xs">Hushållsbudget för {household}</Title>
                 <Form
                     {...{
                         persons,
-                        handleForm,
+                        setPersons,
                         upsertPerson,
                         date,
                         setDate,

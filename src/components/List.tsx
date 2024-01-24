@@ -1,6 +1,7 @@
-import { Title, Table, Box, Tabs, Button, ActionIcon, Input } from "@mantine/core";
-import { IconUser, IconEdit, IconRowRemove } from "@tabler/icons-react";
+import { Title, Table, Box, Tabs, Button } from "@mantine/core";
+import { IconUser } from "@tabler/icons-react";
 import { useState, useEffect, Fragment } from 'react';
+import { Expenses } from './Expenses';
 
 export function List({
     persons,
@@ -22,7 +23,6 @@ export function List({
     monthName: string;
 }) {
     const [hasExpensesInMonth, setHasExpensesInMonth] = useState<boolean>(false);
-    const [activeEdit, setActiveEdit] = useState<number | null>(null);
 
     useEffect(() => {
         // Check if any person has expenses in the current month
@@ -44,44 +44,6 @@ export function List({
             </Tabs.Tab>
         );
     })
-
-    const expenseRows = (person: Person) => {
-        const rows = person.getExpenses(date).length > 0 ? person.getExpenses(date).map((expense) => {
-            return (
-                <tr style={{ height: "52px" }}>
-                    <td style={{ minWidth: '40%' }}>
-                        {activeEdit === expense.id ?
-                            <Input value={expense.type} onChange={(e) => {
-                                const updatedExpense = { ...expense, type: e.target.value };
-                                updateExpense(person, updatedExpense);
-                            }} style={{ width: 'fit-content' }} />
-                            :
-                            `${expense.type} (id: ${expense.id})`
-                        }
-                    </td>
-                    <td style={{ minWidth: '40%' }}>
-                        {activeEdit === expense.id ?
-                            <Input value={expense.price} onChange={(e) => {
-                                const updatedExpense = { ...expense, price: Number(e.target.value) };
-                                updateExpense(person, updatedExpense);
-                            }} style={{ width: 'fit-content' }} />
-                            :
-                            expense.price
-                        }
-                    </td>
-                    <td style={{ display: "flex", justifyContent: "end", paddingTop: "11px" }}>
-                        <ActionIcon mr="0.5rem" onClick={() => setActiveEdit(activeEdit === expense.id ? null : expense.id)}>
-                            <IconEdit size="1.125rem" />
-                        </ActionIcon>
-                        <ActionIcon onClick={() => removeExpense(person, expense.id)}>
-                            <IconRowRemove size="1.125rem" color="#e03131" />
-                        </ActionIcon>
-                    </td>
-                </tr>
-            );
-        }) : <tr style={{ height: "52px" }}><td>Inga utgifter registrerade för {person.name} för denna månad</td><td></td></tr>
-        return rows;
-    };
 
     return (
         <Box mt={20}>
@@ -114,7 +76,14 @@ export function List({
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {expenseRows(person)}
+                                                <Expenses {
+                                                    ...{
+                                                        person,
+                                                        date,
+                                                        updateExpense,
+                                                        removeExpense,
+                                                    }
+                                                } />
                                             </tbody>
                                             <tfoot>
                                                 <tr style={{ height: "52px" }}>
