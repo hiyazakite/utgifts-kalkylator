@@ -1,8 +1,7 @@
-import { SyntheticEvent, useEffect } from "react";
-import { Grid, Title, TextInput, NumberInput, Button, Select } from "@mantine/core";
+import { Grid, Title } from "@mantine/core";
 import { MonthPicker } from "@mantine/dates";
 import "dayjs/locale/sv";
-import { useForm, UseFormReturnType } from "@mantine/form";
+import { UseFormReturnType } from "@mantine/form";
 import { PersonForm } from "./PersonForm";
 import { ExpenseForm } from "./ExpenseForm";
 
@@ -24,9 +23,7 @@ export function Form({
     setActivePerson: (personName: string | null) => void;
 }) {
 
-    const resetForms = (forms: Array<UseFormReturnType<ExpenseValues> | UseFormReturnType<PersonValues>>) => {
-        forms.forEach((form) => form.reset());
-    };
+
 
     const handleActivePersonChange = (form: UseFormReturnType<ExpenseValues> | UseFormReturnType<PersonValues>) => {
         if (activePerson && activePerson !== form.values.name) {
@@ -53,7 +50,7 @@ export function Form({
                 <MonthPicker mt={25} onChange={setDate} value={date} locale="sv" />
             </Grid.Col>
             <Grid.Col span={4} pr={20}>
-                <PersonForm {...{ persons, activePerson, setActivePerson, date, upsertPerson, handleActivePersonChange, resetForms }} />
+                <PersonForm {...{ persons, activePerson, setActivePerson, date, upsertPerson, handleActivePersonChange }} />
             </Grid.Col>
             <Grid.Col span={4} pr={20}>
                 <ExpenseForm {...{ persons, setPersons, date, activePerson, setActivePerson }} />

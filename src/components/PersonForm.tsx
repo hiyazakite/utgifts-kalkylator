@@ -1,7 +1,7 @@
 import { useForm, UseFormReturnType } from "@mantine/form";
 import { Select, NumberInput, Button, Title } from "@mantine/core";
-import { SyntheticEvent } from "react";
 import { useEffect } from "react";
+import { resetForms } from "../utils/resetForms";
 
 export function PersonForm({
     persons,
@@ -10,7 +10,6 @@ export function PersonForm({
     date,
     upsertPerson,
     handleActivePersonChange,
-    resetForms,
 }: {
     persons: Person[];
     activePerson: string | null;
@@ -18,7 +17,6 @@ export function PersonForm({
     date: Date;
     upsertPerson: (name: string, baseSalary: number, currentSalary: number) => void;
     handleActivePersonChange: (form: UseFormReturnType<PersonValues>) => void;
-    resetForms: (forms: UseFormReturnType<PersonValues>[]) => void;
 }) {
 
     const personForm = useForm<PersonValues>({
@@ -83,6 +81,7 @@ export function PersonForm({
                     upsertPerson(name, 0, 0);
                     personForm.setFieldValue("baseSalary", 0);
                     personForm.setFieldValue("currentSalary", 0);
+                    setActivePerson(name);
                     return name;
                 }}
                 onSelect={(evt) => handleSelectChange(evt.currentTarget.value, personForm)}

@@ -1,6 +1,7 @@
 import { Button, NumberInput, Select, TextInput, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
+import { resetForms } from "../utils/resetForms";
 
 
 export function ExpenseForm({
@@ -53,6 +54,10 @@ export function ExpenseForm({
         const person = persons.find((person) => person.name === expenseForm.values.name);
         if (person) {
             expenseForm.setFieldValue("name", activePerson || "");
+            expenseForm.setFieldValue("type", "");
+            expenseForm.setFieldValue("price", "");
+        } else {
+            resetForms([expenseForm]);
         }
     }, [activePerson, expenseForm.values.name]);
 

@@ -18,7 +18,7 @@ export function Expenses({
     const [activeEdit, setActiveEdit] = useState<number | null>(null);
     const rows = person.getExpenses(date).length > 0 ? person.getExpenses(date).map((expense) => {
         return (
-            <tr style={{ height: "52px" }}>
+            <tr key={expense.id} style={{ height: "52px" }}>
                 <td style={{ minWidth: '40%' }}>
                     {activeEdit === expense.id ?
                         <Input value={expense.type} onChange={(e) => {
