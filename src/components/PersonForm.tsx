@@ -88,9 +88,9 @@ export function PersonForm({
                 onChange={(name) => handleSelectChange(name, personForm)}
             />
 
-            <NumberInput label="Grundlön efter skatt" mt={10} {...personForm.getInputProps("baseSalary")} />
+            <NumberInput label="Grundinkomst efter skatt" mt={10} {...personForm.getInputProps("baseSalary")} />
             <NumberInput
-                label="Aktuell månadslön efter skatt"
+                label="Aktuell inkomst efter skatt"
                 mt={10}
                 {...personForm.getInputProps("currentSalary")}
             />

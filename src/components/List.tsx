@@ -48,7 +48,7 @@ export function List({
     return (
         <Box mt={20}>
             <Title order={2}>Utgifter för {monthName}</Title>
-            {hasExpensesInMonth ? (
+            {persons.length > 0 ? (
                 <Tabs
                     radius="md"
                     mt={20}
@@ -101,7 +101,7 @@ export function List({
                     </Fragment>
                 </Tabs>
             ) : (
-                <p>Inga utgifter registrerade för denna månad</p>
+                <p>Inga personer eller utgifter är tillagda</p>
             )
             }
         </Box>

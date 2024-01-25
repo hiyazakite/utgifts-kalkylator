@@ -50,6 +50,8 @@ export const summarize = (
             return acc;
         }, 0),
 
+
+
         // Calculate the split costs for each person based on their salary difference
         splitCosts(): SplitCost[] {
             // Calculate the total reduced salary for all persons

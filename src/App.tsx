@@ -1,6 +1,7 @@
 import { ThemeProvider } from "./ThemeProvider";
 import { Form } from "./components/Form";
 import { List } from "./components/List";
+import { Calculations } from "./components/Calculations";
 import { Result } from "./components/Result";
 import { Container, Title, Divider } from "@mantine/core";
 import { useState } from "react";
@@ -43,6 +44,7 @@ export default function App() {
     const removePerson = (personName: string): void => {
         const newPersons = persons.filter((person) => person.name !== personName);
         setPersons(newPersons);
+        setActivePerson(persons[0]?.name || null)
     };
 
     const removeExpense = (person: Person, id: number) => {
@@ -98,6 +100,8 @@ export default function App() {
                         monthName: month(date),
                     }}
                 />
+                <Divider my="lg" />
+                <Calculations {...{ persons, date }} />
                 <Divider my="lg" />
                 <Result {...{ persons, date }} />
             </Container>
