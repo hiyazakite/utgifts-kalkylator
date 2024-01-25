@@ -19,7 +19,7 @@ Where:
 - $\(I_i)$ motsvarar grundinkomsten för föräldern med reducerad inkomst.
 - $\(I_1)$ motsvarar inkomsten för föräldern som arbetar.
 - $\(I_{\text{leave}})$ motsvarar inkomsten för föräldern som är föräldraledig.
-- $4\(C\)$ motsvara totala hushållskostander.
+- $\(C\)$ motsvara totala hushållskostander.
 
 
 # TODO
