@@ -12,7 +12,7 @@ föräldraledighet.
 
 When determining the split of household costs between two parents, where one is on parental leave, you can use the following mathematical formula:
 
-\[ C_i = \frac{I_i}{I_1 + I_{\text{leave}}} \times C \]
+$\[ C_i = \frac{I_i}{I_1 + I_{\text{leave}}} \times C \]`$
 
 Where:
 - \(C_i\) is the contribution of the ith person.
