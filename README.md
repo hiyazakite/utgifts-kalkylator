@@ -14,7 +14,6 @@ den med lägst inkomst kommer få kompensera den föräldern med högre inkomst 
 
 $\[ C_i = \frac{I_i}{I_1 + I_{\text{leave}}} \times C \]$
 
-Where:
 - $\(C_i)$ motsvarar andelen som den förälder med reducerad inkomst ska betala.
 - $\(I_i)$ motsvarar grundinkomsten för föräldern med reducerad inkomst.
 - $\(I_1)$ motsvarar inkomsten för föräldern som arbetar.
