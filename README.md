@@ -5,9 +5,6 @@ Base : React + Mantine, with Vite. (forked vite-mantine official template)
 Detta är en applikation som ska underlätta uppdelningen av kostnader under
 föräldraledighet.
 
-
-#Modeller
-
 ## Splitting Household Costs Formula
 
 When determining the split of household costs between two parents, where one is on parental leave, you can use the following mathematical formula:
@@ -15,11 +12,11 @@ When determining the split of household costs between two parents, where one is 
 $\[ C_i = \frac{I_i}{I_1 + I_{\text{leave}}} \times C \]`$
 
 Where:
-- \(C_i\) is the contribution of the ith person.
-- \(I_i\) is the income of the ith person.
-- \(I_1\) is the income of the first parent.
-- \(I_{\text{leave}}\) is the reduced income during parental leave.
-- \(C\) is the total household costs.
+- $\(C_i\)`$ is the contribution of the ith person.
+- $\(I_i\)`$ is the income of the ith person.
+- $\(I_1\)`$ is the income of the first parent.
+- $\(I_{\text{leave}}\)`$ is the reduced income during parental leave.
+- 4\(C\)`$ is the total household costs.
 
 
 # TODO
