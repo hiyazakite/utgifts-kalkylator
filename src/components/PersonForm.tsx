@@ -20,13 +20,20 @@ export function PersonForm({
 }) {
 
     const personForm = useForm<PersonValues>({
-        initialValues: {
-            name: "",
-        },
         validate: {
             name: (value) => (!value.trim() ? "Du måste ange ett namn" : undefined),
             baseSalary: (value) => (!value || value <= 0 ? "Du måste ange grundlön" : undefined),
-            currentSalary: (value) => (!value || value <= 0 ? "Du måste ange nuvarande lön" : undefined),
+            currentSalary: (value) => {
+                if (!value) {
+                    return "Du måste ange aktuell inkomst";
+                }
+                if (value < 0) {
+                    return "Inkomst måste vara positiv";
+                }
+                if (value > personForm.values.baseSalary) {
+                    return "Aktuell inkomst kan inte vara högre än grundlönen";
+                }
+            }
         },
     });
 

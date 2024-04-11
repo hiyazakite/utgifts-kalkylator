@@ -1,9 +1,12 @@
+import uniqolor from 'uniqolor';
+
 /**
  * Calculates the summary of expenses for a group of persons.
  * @param persons - An array of Person objects.
  * @param date - The date for which the summary is calculated.
  * @returns An object containing various summary properties.
  */
+
 export const summarize = (
     persons: Person[],
     date: Date,
@@ -13,7 +16,7 @@ export const summarize = (
     salaryDiff: () => number;
     totalCost: number;
     remaining: number;
-    splitCosts: () => Array<SplitCost>;
+    splitCosts: (adjustForCurrentSalary: boolean) => Array<SplitCost>;
 } => {
     return {
         // Calculate the sum of base salaries for all persons
@@ -32,7 +35,7 @@ export const summarize = (
             return acc;
         }, 0),
 
-        // Calculate the percentage difference between current salary and base salary
+        // Calculate the percentage difference between current sum of all salaries and base salaries
         salaryDiff() {
             return (this.currentSalary - this.baseSalary) / this.baseSalary;
         },
@@ -50,22 +53,23 @@ export const summarize = (
             return acc;
         }, 0),
 
-
-
-        // Calculate the split costs for each person based on their salary difference
-        splitCosts(): SplitCost[] {
-            // Calculate the total reduced salary for all persons
-            const totalReducedSalary = persons.reduce((acc, person) => acc + 1 + person.salaryDiff(date), 0);
+        splitCosts(adjustForCurrentSalary: boolean): SplitCost[] {
 
             // Map each person to a SplitCost object
             return persons.map(person => {
-                const reducedSalary = 1 + person.salaryDiff(date);
+                // Calculate the person's base salary as a percentage of the total base salary if adjustForBaseSalary is true
+                const currentSalaryPercentage = adjustForCurrentSalary ? person.getCurrentSalary(date) / this.currentSalary : 1 / persons.length;
+
+                // Calculate the split cost as the total cost multiplied by the base salary percentage
+                const splitCost = this.totalCost * currentSalaryPercentage;
+
                 return {
                     name: person.name,
-                    splitCost: ((reducedSalary / totalReducedSalary) * this.totalCost).toFixed(0) as unknown as number,
-                    totalCost: person.totalCost(date)
+                    splitCost: splitCost.toFixed(0) as unknown as number, // Round to 2 decimal places
+                    totalCost: person.totalCost(date),
+                    color: uniqolor(person.id).color
                 };
             });
-        }
+        },
     };
 };

@@ -1,14 +1,38 @@
 import { Box, Table, Title } from "@mantine/core";
 import { summarize } from "../utils/summarize";
+import { Calculations } from "./Calculations";
+import { Charts } from "./Charts"
+import { useState } from "react";
 
-export function Result({ persons, date }: { persons: Person[]; date: Date }) {
+export function Result({
+    persons,
+    date
+}: {
+    persons: Person[];
+    date: Date
+}) {
+
     const sum = summarize(persons, date);
+    const [adjustForBaseSalary, setAdjustForBaseSalary] = useState<boolean>(false);
+
+
+    const splits = sum.splitCosts(adjustForBaseSalary);
+
+    const splitsList = splits.map((person) => {
+        return (
+            <li key={person.name}>
+                {person.name} ska {person.splitCost < person.totalCost ? 'få tillbaka' : 'betala'} {Math.abs(person.splitCost - person.totalCost)} kronor (Utgifts del {person.splitCost} kronor justerat för egna utgifter {person.totalCost} kronor)
+            </li>
+        )
+    })
+
+
 
     if (persons.length > 0) {
         return (
             <Box mt={20}>
                 <Title order={3}>Kalkyl</Title>
-                <Table>
+                <Table mt={10}>
                     <thead>
                         <tr>
                             <th>Namn</th>
@@ -51,15 +75,13 @@ export function Result({ persons, date }: { persons: Person[]; date: Date }) {
                 <Title order={3} mt={20}>
                     Fördelning av kostnader
                 </Title>
+
+                <Calculations {...{ adjustForBaseSalary, setAdjustForBaseSalary }} />
                 <ul>
-                    {sum.splitCosts().map((person) => {
-                        return (
-                            <li key={person.name}>
-                                {person.name} ska {person.splitCost < person.totalCost ? 'få tillbaka' : 'betala'} {Math.abs(person.splitCost - person.totalCost)} kronor (Utgifts del {person.splitCost} kronor justerat för egna utgifter {person.totalCost} kronor)
-                            </li>
-                        );
-                    })}
+                    {splitsList}
                 </ul>
+
+                <Charts splitCosts={splits} />
             </Box>
         );
     }

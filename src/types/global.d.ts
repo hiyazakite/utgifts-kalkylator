@@ -11,9 +11,10 @@ interface ExpenseValues {
 }
 
 interface Person {
+    id: string;
     name: string;
     expenses: Expense[];
-    baseSalary?: number;
+    baseSalary: number;
     monthlySalaries: {
         amount: number;
         date: Date;
@@ -30,12 +31,13 @@ interface Person {
 
 interface PersonValues {
     name: string;
-    baseSalary?: number | ""; // "" is required to clear the search field on state change
-    currentSalary?: number | "";
+    baseSalary: number; // "" is required to clear the search field on state change
+    currentSalary: number;
 }
 
 interface SplitCost {
     name: string;
     splitCost: number;
     totalCost: number;
+    color: string;
 }

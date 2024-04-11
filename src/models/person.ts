@@ -1,9 +1,10 @@
-import dayjs from "dayjs";
+import { v4 as uuidv4 } from "uuid";
 
 export class Person {
+    id: string;
     name: string;
     expenses: Expense[];
-    baseSalary?: number;
+    baseSalary: number;
     monthlySalaries: {
         amount: number;
         date: Date;
@@ -13,7 +14,8 @@ export class Person {
         amount: number;
         date: Date;
     }[];
-    constructor(name: string, baseSalary?: number, currentSalary?: number) {
+    constructor(name: string, baseSalary: number, currentSalary?: number) {
+        this.id = uuidv4();
         this.name = name;
         this.baseSalary = baseSalary;
         this.monthlySalaries = [

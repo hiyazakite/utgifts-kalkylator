@@ -23,8 +23,8 @@ export default function App() {
 
     const upsertPerson = (
         name: string,
-        baseSalary?: number,
-        currentSalary?: number,
+        baseSalary: number,
+        currentSalary: number,
     ): void => {
         //if person exists, update
         const person = persons.find((person) => person.name === name);
@@ -71,7 +71,6 @@ export default function App() {
         });
     };
 
-
     return (
         <ThemeProvider>
             <Container size="md" mt={30}>
@@ -100,8 +99,6 @@ export default function App() {
                         monthName: month(date),
                     }}
                 />
-                <Divider my="lg" />
-                <Calculations {...{ persons, date }} />
                 <Divider my="lg" />
                 <Result {...{ persons, date }} />
             </Container>

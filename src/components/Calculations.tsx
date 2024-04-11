@@ -1,30 +1,20 @@
-import { Grid, Title, Select } from '@mantine/core';
+import { Grid, Checkbox } from '@mantine/core';
 
-export function Calculations({ persons, date }: { persons: Person[], date: Date }) {
+export function Calculations({
+    adjustForBaseSalary,
+    setAdjustForBaseSalary,
+}: {
+    adjustForBaseSalary: boolean,
+    setAdjustForBaseSalary: (adjustForBaseSalary: boolean) => void
+}) {
     return (
-        <Grid>
+        <Grid mt={10}>
             <Grid.Col span={4}>
-                <Select label="Välj modell"
-                    placeholder="Välj modell"
-                    data={[
-                        { value: '1', label: 'Dela lika delar' },
-                        { value: '2', label: 'Dela justerat för inkomst' },
-                        { value: '3', label: 'Modell 3' },
-                        { value: '4', label: 'Modell 4' },
-                    ]}
-                    mt={10}
-
-                />
-            </Grid.Col>
-            <Grid.Col span={4}>
-                <Select label="Justera för skillnad i grundinkomst"
-                    placeholder="Ja / Nej"
-                    data={[
-                        { value: '1', label: 'JA' },
-                        { value: '2', label: 'NEJ' },
-                    ]}
-                    mt={10}
-
+                <Checkbox
+                    label="Justera för skillnad i aktuell inkomst"
+                    mt={32}
+                    checked={adjustForBaseSalary}
+                    onChange={(evt) => { setAdjustForBaseSalary(evt.currentTarget.checked) }}
                 />
             </Grid.Col>
         </Grid>
