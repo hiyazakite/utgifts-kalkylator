@@ -1,32 +1,26 @@
-import { Box, Table, Title } from "@mantine/core";
-import { summarize } from "../utils/summarize";
-import { Calculations } from "./Calculations";
-import { Charts } from "./Charts"
-import { useState } from "react";
+import { Box, Table, Title } from '@mantine/core';
+import { useState } from 'react';
+import { summarize } from '../utils/summarize';
+import { Calculations } from './Calculations';
+import { Charts } from './Charts';
 
 export function Result({
     persons,
-    date
+    date,
 }: {
     persons: Person[];
     date: Date
 }) {
-
     const sum = summarize(persons, date);
     const [adjustForBaseSalary, setAdjustForBaseSalary] = useState<boolean>(false);
 
-
     const splits = sum.splitCosts(adjustForBaseSalary);
 
-    const splitsList = splits.map((person) => {
-        return (
+    const splitsList = splits.map((person) => (
             <li key={person.name}>
                 {person.name} ska {person.splitCost < person.totalCost ? 'få tillbaka' : 'betala'} {Math.abs(person.splitCost - person.totalCost)} kronor (Utgifts del {person.splitCost} kronor justerat för egna utgifter {person.totalCost} kronor)
             </li>
-        )
-    })
-
-
+        ));
 
     if (persons.length > 0) {
         return (
@@ -44,8 +38,7 @@ export function Result({
                         </tr>
                     </thead>
                     <tbody>
-                        {persons.map((person) => {
-                            return (
+                        {persons.map((person) => (
                                 <tr key={person.name}>
                                     <td>{person.name}</td>
                                     <td>{person.baseSalary}</td>
@@ -55,11 +48,10 @@ export function Result({
                                     <td>
                                         {person.getCurrentSalary(date)
                                             ? person.getCurrentSalary(date) - person.totalCost(date)
-                                            : ""}
+                                            : ''}
                                     </td>
                                 </tr>
-                            );
-                        })}
+                            ))}
                     </tbody>
                     <tfoot>
                         <tr>
@@ -85,14 +77,12 @@ export function Result({
             </Box>
         );
     }
-    else {
+
         return (
             <Box mt={20}>
                 <Title order={3}>Kalkyl</Title>
                 <p>Inga personer eller utgifter är tillagda</p>
             </Box>
 
-        )
-    }
-
+        );
 }

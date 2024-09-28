@@ -16,30 +16,37 @@ export function Expenses({
     }
 ) {
     const [activeEdit, setActiveEdit] = useState<number | null>(null);
-    const rows = person.getExpenses(date).length > 0 ? person.getExpenses(date).map((expense) => {
-        return (
-            <tr key={expense.id} style={{ height: "52px" }}>
+    const rows = person.getExpenses(date).length > 0 ? person.getExpenses(date).map((expense) => (
+            <tr key={expense.id} style={{ height: '52px' }}>
                 <td style={{ minWidth: '40%' }}>
                     {activeEdit === expense.id ?
-                        <Input value={expense.type} onChange={(e) => {
+                        <Input
+                          value={expense.type}
+                          onChange={(e) => {
                             const updatedExpense = { ...expense, type: e.target.value };
                             updateExpense(person, updatedExpense);
-                        }} style={{ width: 'fit-content' }} />
+                        }}
+                          style={{ width: 'fit-content' }}
+                        />
                         :
                         `${expense.type} (id: ${expense.id})`
                     }
                 </td>
                 <td style={{ minWidth: '40%' }}>
                     {activeEdit === expense.id ?
-                        <Input value={expense.price} onChange={(e) => {
+                        <Input
+                          value={expense.price}
+                          onChange={(e) => {
                             const updatedExpense = { ...expense, price: Number(e.target.value) };
                             updateExpense(person, updatedExpense);
-                        }} style={{ width: 'fit-content' }} />
+                        }}
+                          style={{ width: 'fit-content' }}
+                        />
                         :
                         expense.price
                     }
                 </td>
-                <td style={{ display: "flex", justifyContent: "end", paddingTop: "11px" }}>
+                <td style={{ display: 'flex', justifyContent: 'end', paddingTop: '11px' }}>
                     <ActionIcon mr="0.5rem" onClick={() => setActiveEdit(activeEdit === expense.id ? null : expense.id)}>
                         <IconEdit size="1.125rem" />
                     </ActionIcon>
@@ -48,7 +55,6 @@ export function Expenses({
                     </ActionIcon>
                 </td>
             </tr>
-        );
-    }) : <tr style={{ height: "52px" }}><td>Inga utgifter registrerade för {person.name} för denna månad</td><td></td></tr>
+        )) : <tr style={{ height: '52px' }}><td>Inga utgifter registrerade för {person.name} för denna månad</td><td /></tr>;
     return rows;
 }

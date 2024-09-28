@@ -11,12 +11,12 @@ export function Calculations({
         <Grid mt={10}>
             <Grid.Col span={4}>
                 <Checkbox
-                    label="Justera för skillnad i aktuell inkomst"
-                    mt={32}
-                    checked={adjustForBaseSalary}
-                    onChange={(evt) => { setAdjustForBaseSalary(evt.currentTarget.checked) }}
+                  label="Justera för skillnad i aktuell inkomst"
+                  mt={32}
+                  checked={adjustForBaseSalary}
+                  onChange={(evt) => { setAdjustForBaseSalary(evt.currentTarget.checked); }}
                 />
             </Grid.Col>
         </Grid>
-    )
+    );
 }

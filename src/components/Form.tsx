@@ -1,9 +1,10 @@
-import { Grid, Title } from "@mantine/core";
-import { MonthPicker } from "@mantine/dates";
-import "dayjs/locale/sv";
-import { UseFormReturnType } from "@mantine/form";
-import { PersonForm } from "./PersonForm";
-import { ExpenseForm } from "./ExpenseForm";
+/* eslint-disable max-len */
+import { Grid, Title } from '@mantine/core';
+import { MonthPicker } from '@mantine/dates';
+import 'dayjs/locale/sv';
+import { UseFormReturnType } from '@mantine/form';
+import { PersonForm } from './PersonForm';
+import { ExpenseForm } from './ExpenseForm';
 
 export function Form({
     persons,
@@ -12,7 +13,7 @@ export function Form({
     date,
     setDate,
     activePerson,
-    setActivePerson
+    setActivePerson,
 }: {
     persons: Person[];
     setPersons: (persons: Person[]) => void;
@@ -22,9 +23,6 @@ export function Form({
     activePerson: string | null;
     setActivePerson: (personName: string | null) => void;
 }) {
-
-
-
     const handleActivePersonChange = (form: UseFormReturnType<ExpenseValues> | UseFormReturnType<PersonValues>) => {
         if (activePerson && activePerson !== form.values.name) {
             const person = persons.find((p) => p.name === activePerson);
@@ -57,6 +55,4 @@ export function Form({
             </Grid.Col>
         </Grid>
     );
-
-
 }

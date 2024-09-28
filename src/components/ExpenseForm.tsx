@@ -1,7 +1,7 @@
-import { Button, NumberInput, Select, TextInput, Title } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { useEffect, useRef } from "react";
-import { resetForms } from "../utils/resetForms";
+import { Button, NumberInput, Select, TextInput, Title } from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { useEffect, useRef } from 'react';
+import { resetForms } from '../utils/resetForms';
 
 export function ExpenseForm({
     persons,
@@ -16,13 +16,7 @@ export function ExpenseForm({
     activePerson: string | null;
     setActivePerson: (personName: string | null) => void;
 }) {
-    const inputRef = useRef(null);
-
-    const clearExpenses = () => {
-        expenseForm.setFieldValue('name', activePerson || '');
-        expenseForm.setFieldValue('type', '');
-        expenseForm.setFieldValue('price', '');
-    }
+    const inputRef = useRef<HTMLInputElement>(null);
 
     const expenseForm = useForm<ExpenseValues>({
         initialValues: {
@@ -42,8 +36,14 @@ export function ExpenseForm({
         },
     });
 
+    const clearExpenses = () => {
+        expenseForm.setFieldValue('name', activePerson || '');
+        expenseForm.setFieldValue('type', '');
+        expenseForm.setFieldValue('price', '');
+    };
+
     const handleFormSubmit = (values: ExpenseValues) => {
-        const person = persons.find((person) => person.name === values.name);
+        const person = persons.find((lookup) => lookup.name === values.name);
         if (person) {
             person.addExpense({
                 id: Date.now(),
@@ -61,7 +61,7 @@ export function ExpenseForm({
     };
 
     useEffect(() => {
-        const person = persons.find((person) => person.name === expenseForm.values.name);
+        const person = persons.find((lookup) => lookup.name === expenseForm.values.name);
         if (person) {
             clearExpenses();
         } else {
@@ -71,34 +71,33 @@ export function ExpenseForm({
 
     return (
         <form
-            onSubmit={expenseForm.onSubmit((values) => {
+          onSubmit={expenseForm.onSubmit((values) => {
                 handleFormSubmit(values);
             })}
         >
             <Title order={3}>Lägg till en utgift</Title>
             <Select
-                label="Välj en person"
-                placeholder={persons.length > 0 ? "Välj en person" : "Skapa en person först"}
-                data={persons.map((person) => ({
+              label="Välj en person"
+              placeholder={persons.length > 0 ? 'Välj en person' : 'Skapa en person först'}
+              data={persons.map((person) => ({
                     label: person.name,
                     value: person.name,
                 }))}
-                {...expenseForm.getInputProps("name")}
-                mt={10}
-                onChange={(name: string) => {
-                    expenseForm.setFieldValue("name", name);
-                    const person = persons.find((person) => person.name === name);
+              {...expenseForm.getInputProps('name')}
+              mt={10}
+              onChange={(name: string) => {
+                    expenseForm.setFieldValue('name', name);
+                    const person = persons.find((lookup) => lookup.name === name);
                     if (person) {
                         setActivePerson(person.name);
                     }
-                    ;
                 }}
             />
-            <TextInput label="Utgiftstyp" mt={10} {...expenseForm.getInputProps("type")} ref={inputRef} />
-            <NumberInput label="Pris" mt={10} {...expenseForm.getInputProps("price")} />
+            <TextInput label="Utgiftstyp" mt={10} {...expenseForm.getInputProps('type')} ref={inputRef} />
+            <NumberInput label="Pris" mt={10} {...expenseForm.getInputProps('price')} />
             <Button type="submit" variant="outline" mt={15}>
                 Lägg till
             </Button>
         </form>
-    )
+    );
 }

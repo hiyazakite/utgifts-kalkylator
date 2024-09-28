@@ -1,5 +1,7 @@
-import { Title, Table, Box, Tabs, Button } from "@mantine/core";
-import { IconUser } from "@tabler/icons-react";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable max-len */
+import { Title, Table, Box, Tabs, Button } from '@mantine/core';
+import { IconUser } from '@tabler/icons-react';
 import { useState, useEffect, Fragment } from 'react';
 import { Expenses } from './Expenses';
 
@@ -26,53 +28,45 @@ export function List({
 
     useEffect(() => {
         // Check if any person has expenses in the current month
-        const hasExpenses = persons.some((person) => {
-            return person.expenses.some((expense) => {
-                return expense.date.getMonth() === date.getMonth();
-            });
-        });
+        const hasExpenses = persons.some((person) => person.expenses.some((expense) => expense.date.getMonth() === date.getMonth()));
 
         // Set hasExpensesInMonth
         setHasExpensesInMonth(hasExpenses);
     }, [persons, date]);
 
-
-    const personTabs = persons.map((person) => {
-        return (
+    const personTabs = persons.map((person) => (
             <Tabs.Tab key={person.name} value={person.name} icon={<IconUser size="1.5rem" />}>
                 {person.name}
             </Tabs.Tab>
-        );
-    })
+        ));
 
     return (
         <Box mt={20}>
             <Title order={2}>Utgifter för {monthName}</Title>
             {persons.length > 0 ? (
                 <Tabs
-                    radius="md"
-                    mt={20}
-                    orientation="horizontal"
-                    variant="outline"
-                    onTabChange={setActivePerson}
-                    value={activePerson}
+                  radius="md"
+                  mt={20}
+                  orientation="horizontal"
+                  variant="outline"
+                  onTabChange={setActivePerson}
+                  value={activePerson}
                 >
                     <Tabs.List>
                         {personTabs}
                         <Button variant="filled" color="red" style={{ marginLeft: 'auto' }} onClick={() => activePerson ? removePerson(activePerson) : ''}>Ta bort {activePerson}</Button>
                     </Tabs.List>
-                    <Fragment>
-                        {persons.map((person) => {
-                            return (
+                    <>
+                        {persons.map((person) => (
                                 <Tabs.Panel key={person.name} value={person.name}>
                                     <Box>
                                         <Table>
 
                                             <thead>
-                                                <tr style={{ height: "52px" }}>
+                                                <tr style={{ height: '52px' }}>
                                                     <th>Utgiftstyp</th>
                                                     <th>Kostnad</th>
-                                                    <th></th>
+                                                    <th />
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -83,27 +77,27 @@ export function List({
                                                         updateExpense,
                                                         removeExpense,
                                                     }
-                                                } />
+                                                }
+                                                />
                                             </tbody>
                                             <tfoot>
-                                                <tr style={{ height: "52px" }}>
+                                                <tr style={{ height: '52px' }}>
                                                     <th>Total kostnad</th>
                                                     <th>{person.totalCost(date)}</th>
-                                                    <th></th>
+                                                    <th />
                                                 </tr>
                                             </tfoot>
                                         </Table>
                                     </Box>
                                 </Tabs.Panel>
-                            );
-                        })}
+                            ))}
 
-                    </Fragment>
+                    </>
                 </Tabs>
             ) : (
                 <p>Inga personer eller utgifter är tillagda</p>
             )
             }
         </Box>
-    )
-};
+    );
+}

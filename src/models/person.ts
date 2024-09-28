@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4 } from 'uuid';
 
 export class Person {
     id: string;
@@ -40,7 +40,7 @@ export class Person {
 
         if (!date) {
             return this.expenses.reduce((acc, expense) => acc + expense.price, 0);
-        } else {
+        }
             return this.expenses.reduce((acc, expense) => {
                 if (
                     expense.date.getMonth() === date.getMonth() &&
@@ -50,7 +50,6 @@ export class Person {
                 }
                 return acc;
             }, 0);
-        }
     };
 
     upsertMonthlySalary = (amount: number, date: Date): void => {
@@ -64,12 +63,10 @@ export class Person {
          *
          */
 
-        const salary = this.monthlySalaries.find((salary) => {
-            return (
-                salary.date.getMonth() === date.getMonth() &&
-                salary.date.getFullYear() === date.getFullYear()
-            );
-        });
+        const salary = this.monthlySalaries.find((lookup) => (
+                lookup.date.getMonth() === date.getMonth() &&
+                lookup.date.getFullYear() === date.getFullYear()
+            ));
 
         if (salary) {
             salary.amount = amount; // This is a reference to the object in the array, so it will update the array
@@ -105,18 +102,15 @@ export class Person {
          * @returns The monthly salary
          *
          * */
-        const salary = this.monthlySalaries.find((salary) => {
-            return (
-                salary.date.getMonth() === date.getMonth() &&
-                salary.date.getFullYear() === date.getFullYear()
-            );
-        });
+        const salary = this.monthlySalaries.find((lookup) => (
+                lookup.date.getMonth() === date.getMonth() &&
+                lookup.date.getFullYear() === date.getFullYear()
+            ));
 
         if (salary) {
             return salary.amount;
-        } else {
-            return this.baseSalary || 0;
         }
+            return this.baseSalary || 0;
     };
 
     addExpense = (expense: Expense): void => {
@@ -142,14 +136,11 @@ export class Person {
 
         if (!date) {
             return this.expenses;
-        } else {
-            return this.expenses.filter((expense) => {
-                return (
+        }
+            return this.expenses.filter((expense) => (
                     expense.date.getMonth() === date.getMonth() &&
                     expense.date.getFullYear() === date.getFullYear()
-                );
-            });
-        }
+                ));
     };
 
     removeExpense(id: number): void {
@@ -157,7 +148,7 @@ export class Person {
          * Remove an expense from the person's expenses
          * @param id - The id of the expense to remove
          * @returns void
-         * 
+         *
          */
         this.expenses = this.expenses.filter(
             (expense) => expense.id !== id
@@ -165,11 +156,11 @@ export class Person {
     }
 
     updateExpense(updatedExpense: Expense): void {
-        /** 
+        /**
          * Update an expense in the person's expenses
          * @param updatedExpense - The updated expense
          * @returns void
-         * 
+         *
          */
         this.expenses = this.expenses.map((expense) =>
             expense.id === updatedExpense.id ? updatedExpense : expense
