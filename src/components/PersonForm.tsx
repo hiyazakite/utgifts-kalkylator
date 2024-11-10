@@ -7,23 +7,24 @@ import { resetForms } from '../utils/resetForms';
 export function PersonForm({
     persons,
     activePerson,
-    setActivePerson,
+    setPendingPersonId,
     date,
     upsertPerson,
     handleActivePersonChange,
 }: {
-    persons: Person[];
-    activePerson: string | null;
-    setActivePerson: (personName: string | null) => void;
+    persons: IPerson[];
+    activePerson: activePerson | null;
+    setPendingPersonId: (id: number) => void;
     date: Date;
-    upsertPerson: (name: string, baseSalary: number, currentSalary: number) => void;
+    // eslint-disable-next-line max-len
+    upsertPerson: (name: string, baseSalary: number, monthlySalary: number) => Promise<IPerson | null>;
     handleActivePersonChange: (form: UseFormReturnType<PersonValues>) => void;
 }) {
     const personForm = useForm<PersonValues>({
         validate: {
             name: (value) => (!value.trim() ? 'Du måste ange ett namn' : undefined),
             baseSalary: (value) => (!value || value <= 0 ? 'Du måste ange grundlön' : undefined),
-            currentSalary: (value) => {
+            monthlySalary: (value) => {
                 if (!value) {
                     return 'Du måste ange aktuell inkomst';
                 }
@@ -37,18 +38,18 @@ export function PersonForm({
         },
     });
 
-    const handlePersonFormSubmit = (values: PersonValues) => {
-        if (values.baseSalary && values.currentSalary) {
-            upsertPerson(values.name, values.baseSalary, values.currentSalary);
+    const handlePersonFormSubmit = async (values: PersonValues) => {
+        if (values.baseSalary && values.monthlySalary) {
+            await upsertPerson(values.name, values.baseSalary, values.monthlySalary);
         }
     };
 
     const handleSelectChange = (name: string | null, form: UseFormReturnType<PersonValues>) => {
-        const person = persons.find((lookup) => lookup.name === name);
+        const person = persons.find((p) => p.name === name);
         if (person) {
-            setActivePerson(name);
+            setPendingPersonId(person.id);
             form.setFieldValue('baseSalary', person.baseSalary);
-            form.setFieldValue('currentSalary', person.getCurrentSalary(date));
+            form.setFieldValue('monthlySalary', person.getCurrentSalary(date));
         }
     };
 
@@ -57,7 +58,7 @@ export function PersonForm({
 
         if (selectedPerson) {
             personForm.setFieldValue('baseSalary', selectedPerson.baseSalary);
-            personForm.setFieldValue('currentSalary', selectedPerson.getCurrentSalary(date));
+            personForm.setFieldValue('monthlySalary', selectedPerson.getCurrentSalary(date));
         } else {
             resetForms([personForm]);
         }
@@ -85,12 +86,17 @@ export function PersonForm({
               getCreateLabel={(name) => `+ Lägg till ${name}`}
               searchable
               onCreate={(name) => {
-                    upsertPerson(name, 0, 0);
+                // Immediately return the name to satisfy the type requirement
+                (async () => {
+                    const newPerson = await upsertPerson(name, 0, 0); // Await upsertPerson asynchronously
                     personForm.setFieldValue('baseSalary', 0);
-                    personForm.setFieldValue('currentSalary', 0);
-                    setActivePerson(name);
-                    return name;
-                }}
+                    personForm.setFieldValue('monthlySalary', 0);
+                    if (newPerson) {
+                        setPendingPersonId(newPerson.id); // Use the id once the person is created
+                    }
+                })();
+                return name; // Return name synchronously
+              }}
               onSelect={(evt) => handleSelectChange(evt.currentTarget.value, personForm)}
               onChange={(name) => handleSelectChange(name, personForm)}
             />
@@ -99,7 +105,7 @@ export function PersonForm({
             <NumberInput
               label="Aktuell inkomst efter skatt"
               mt={10}
-              {...personForm.getInputProps('currentSalary')}
+              {...personForm.getInputProps('monthlySalary')}
             />
             <Button type="submit" variant="outline" mt={15}>
                 Lägg till / ändra

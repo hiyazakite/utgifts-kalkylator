@@ -8,18 +8,19 @@ export function ExpenseForm({
     setPersons,
     date,
     activePerson,
-    setActivePerson,
+    setPendingPersonId,
 }: {
-    persons: Person[];
-    setPersons: (persons: Person[]) => void;
+    persons: IPerson[];
+    setPersons: (persons: IPerson[]) => void;
     date: Date;
-    activePerson: string | null;
-    setActivePerson: (personName: string | null) => void;
+    activePerson: activePerson | null;
+    setPendingPersonId: (id: number) => void;
 }) {
     const inputRef = useRef<HTMLInputElement>(null);
 
     const expenseForm = useForm<ExpenseValues>({
         initialValues: {
+            id: null,
             name: '',
             price: undefined,
             type: '',
@@ -37,31 +38,33 @@ export function ExpenseForm({
     });
 
     const clearExpenses = () => {
-        expenseForm.setFieldValue('name', activePerson || '');
+        expenseForm.setFieldValue('name', activePerson?.name || '');
         expenseForm.setFieldValue('type', '');
         expenseForm.setFieldValue('price', '');
     };
 
-    const handleFormSubmit = (values: ExpenseValues) => {
-        const person = persons.find((lookup) => lookup.name === values.name);
+    const handleFormSubmit = async (values: ExpenseValues) => {
+        const person = persons.find((p) => p.name === values.name);
         if (person) {
-            person.addExpense({
-                id: Date.now(),
-                type: values.type,
-                price: values.price || 0,
-                date,
+            // Ensure date defaults to the first day of the current month if undefined or current day
+            //const firstDayOfMonth = dayjs(date || new Date()).startOf('month').toDate();
+            await person.addExpense({
+                id: null,
+                description: values.type,
+                amount: values.price || 0,
+                date, // Force first day if date is missing
+                person: person.id,
             });
-        }
-        setPersons([...persons]);
-        person ? setActivePerson(person.name) : '';
-        clearExpenses();
-        if (inputRef.current) {
-            inputRef.current.focus();
-        }
-    };
+    }
+    setPersons([...persons]);
+    clearExpenses();
+    if (inputRef.current) {
+        inputRef.current.focus();
+    }
+};
 
     useEffect(() => {
-        const person = persons.find((lookup) => lookup.name === expenseForm.values.name);
+        const person = persons.find((p) => p.name === expenseForm.values.name);
         if (person) {
             clearExpenses();
         } else {
@@ -87,9 +90,9 @@ export function ExpenseForm({
               mt={10}
               onChange={(name: string) => {
                     expenseForm.setFieldValue('name', name);
-                    const person = persons.find((lookup) => lookup.name === name);
+                    const person = persons.find((p) => p.name === name);
                     if (person) {
-                        setActivePerson(person.name);
+                        setPendingPersonId(person.id);
                     }
                 }}
             />

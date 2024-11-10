@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
     "target": "ESNext",
+    "emitDecoratorMetadata": true,  // Required for decorators
+    "experimentalDecorators": true,  // Enables decorator support
     "useDefineForClassFields": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowJs": false,
@@ -8,6 +10,7 @@
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "strict": true,
+    "strictPropertyInitialization": false,
     "forceConsistentCasingInFileNames": true,
     "module": "ESNext",
     "moduleResolution": "Node",
@@ -20,5 +23,6 @@
     }
   },
   "include": ["src", "test-utils"],
+  "exclude": ["node_modules", "src/backend"],  // Exclude backend folder
   "references": [{ "path": "./tsconfig.node.json" }]
 }

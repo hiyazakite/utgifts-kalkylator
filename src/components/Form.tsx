@@ -1,8 +1,10 @@
 /* eslint-disable max-len */
 import { Grid, Title } from '@mantine/core';
 import { MonthPicker } from '@mantine/dates';
+import dayjs from 'dayjs';
 import 'dayjs/locale/sv';
 import { UseFormReturnType } from '@mantine/form';
+import { Dispatch, SetStateAction } from 'react';
 import { PersonForm } from './PersonForm';
 import { ExpenseForm } from './ExpenseForm';
 
@@ -13,45 +15,54 @@ export function Form({
     date,
     setDate,
     activePerson,
-    setActivePerson,
+    setPendingPersonId,
 }: {
-    persons: Person[];
-    setPersons: (persons: Person[]) => void;
-    upsertPerson: (name: string, baseSalary: number, currentSalary: number) => void;
+    persons: IPerson[];
+    setPersons: Dispatch<SetStateAction<IPerson[]>>;
+    upsertPerson: (name: string, baseSalary: number, monthlySalary: number) => Promise<IPerson | null>;
     date: Date;
-    setDate: (date: Date) => void;
-    activePerson: string | null;
-    setActivePerson: (personName: string | null) => void;
+    setDate: Dispatch<SetStateAction<Date>>;
+    activePerson: activePerson | null;
+    setPendingPersonId: (id: number | null) => void;
 }) {
     const handleActivePersonChange = (form: UseFormReturnType<ExpenseValues> | UseFormReturnType<PersonValues>) => {
-        if (activePerson && activePerson !== form.values.name) {
-            const person = persons.find((p) => p.name === activePerson);
+        if (activePerson && activePerson.name !== form.values.name) {
+            const person = persons.find((p) => p.name === activePerson.name);
             if (person) {
                 form.setValues({
                     name: person.name,
                     baseSalary: person.baseSalary,
-                    currentSalary: person.getCurrentSalary(date),
+                    monthlySalary: person.getCurrentSalary(date),
                 });
                 form.setValues({
                     name: person.name,
                 });
             } else {
-                setActivePerson(form.values.name);
+                setPendingPersonId(form.values.id ?? null);
             }
         }
     };
 
     return (
         <Grid mt={10}>
-            <Grid.Col span={4}>
+            <Grid.Col md={6} lg={4}>
                 <Title order={3}>Välj månad</Title>
-                <MonthPicker mt={25} onChange={setDate} value={date} locale="sv" />
+                <MonthPicker
+                  mt={25}
+                  onChange={(selectedDate) => {
+                    const adjustedDate = dayjs(selectedDate).date(25).toDate();
+                    console.log('Date selected in MonthPicker:', adjustedDate);
+                    setDate(adjustedDate);
+                  }}
+                  value={date}
+                  locale="sv"
+                />
             </Grid.Col>
-            <Grid.Col span={4} pr={20}>
-                <PersonForm {...{ persons, activePerson, setActivePerson, date, upsertPerson, handleActivePersonChange }} />
+            <Grid.Col md={6} lg={4} pr={20}>
+                <PersonForm {...{ persons, activePerson, setPendingPersonId, date, upsertPerson, handleActivePersonChange }} />
             </Grid.Col>
-            <Grid.Col span={4} pr={20}>
-                <ExpenseForm {...{ persons, setPersons, date, activePerson, setActivePerson }} />
+            <Grid.Col md={6} lg={4} pr={20}>
+                <ExpenseForm {...{ persons, setPersons, date, activePerson, setPendingPersonId }} />
             </Grid.Col>
         </Grid>
     );

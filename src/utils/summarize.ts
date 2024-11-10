@@ -8,7 +8,7 @@ import uniqolor from 'uniqolor';
  */
 
 export const summarize = (
-    persons: Person[],
+    persons: IPerson[],
     date: Date,
 ): {
     baseSalary: number;
@@ -17,8 +17,7 @@ export const summarize = (
     totalCost: number;
     remaining: number;
     splitCosts: (adjustForCurrentSalary: boolean) => Array<SplitCost>;
-} => {
-    return {
+} => ({
         // Calculate the sum of base salaries for all persons
         baseSalary: persons.reduce((acc, person) => {
             if (person.baseSalary) {
@@ -41,9 +40,7 @@ export const summarize = (
         },
 
         // Calculate the total cost of expenses for all persons
-        totalCost: persons.reduce((acc, person) => {
-            return acc + person.totalCost(date);
-        }, 0),
+        totalCost: persons.reduce((acc, person) => acc + person.totalCost(date), 0),
 
         // Calculate the remaining amount after deducting total expenses from current salary
         remaining: persons.reduce((acc, person) => {
@@ -54,22 +51,22 @@ export const summarize = (
         }, 0),
 
         splitCosts(adjustForCurrentSalary: boolean): SplitCost[] {
-
             // Map each person to a SplitCost object
             return persons.map(person => {
                 // Calculate the person's base salary as a percentage of the total base salary if adjustForBaseSalary is true
+                // eslint-disable-next-line max-len
                 const currentSalaryPercentage = adjustForCurrentSalary ? person.getCurrentSalary(date) / this.currentSalary : 1 / persons.length;
 
                 // Calculate the split cost as the total cost multiplied by the base salary percentage
                 const splitCost = this.totalCost * currentSalaryPercentage;
 
                 return {
+                    id: person.id,
                     name: person.name,
                     splitCost: splitCost.toFixed(0) as unknown as number, // Round to 2 decimal places
                     totalCost: person.totalCost(date),
-                    color: uniqolor(person.id).color
+                    color: uniqolor(person.id).color,
                 };
             });
         },
-    };
-};
+    });

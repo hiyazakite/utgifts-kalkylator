@@ -8,7 +8,7 @@ export function Result({
     persons,
     date,
 }: {
-    persons: Person[];
+    persons: IPerson[];
     date: Date
 }) {
     const sum = summarize(persons, date);
@@ -17,7 +17,7 @@ export function Result({
     const splits = sum.splitCosts(adjustForBaseSalary);
 
     const splitsList = splits.map((person) => (
-            <li key={person.name}>
+            <li key={`split-${person.id}`}>
                 {person.name} ska {person.splitCost < person.totalCost ? 'få tillbaka' : 'betala'} {Math.abs(person.splitCost - person.totalCost)} kronor (Utgifts del {person.splitCost} kronor justerat för egna utgifter {person.totalCost} kronor)
             </li>
         ));
@@ -39,7 +39,7 @@ export function Result({
                     </thead>
                     <tbody>
                         {persons.map((person) => (
-                                <tr key={person.name}>
+                                <tr key={person.id}>
                                     <td>{person.name}</td>
                                     <td>{person.baseSalary}</td>
                                     <td>{person.getCurrentSalary(date)}</td>

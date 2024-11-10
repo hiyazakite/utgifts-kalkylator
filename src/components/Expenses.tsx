@@ -9,10 +9,10 @@ export function Expenses({
     removeExpense,
 }:
     {
-        person: Person;
+        person: IPerson;
         date: Date;
-        updateExpense: (person: Person, expense: Expense) => void
-        removeExpense: (person: Person, id: number) => void
+        updateExpense: (person: IPerson, expense: Expense) => void
+        removeExpense: (person: IPerson, id: number | null) => void
     }
 ) {
     const [activeEdit, setActiveEdit] = useState<number | null>(null);
@@ -21,7 +21,7 @@ export function Expenses({
                 <td style={{ minWidth: '40%' }}>
                     {activeEdit === expense.id ?
                         <Input
-                          value={expense.type}
+                          value={expense.description}
                           onChange={(e) => {
                             const updatedExpense = { ...expense, type: e.target.value };
                             updateExpense(person, updatedExpense);
@@ -29,13 +29,13 @@ export function Expenses({
                           style={{ width: 'fit-content' }}
                         />
                         :
-                        `${expense.type} (id: ${expense.id})`
+                        `${expense.description} (id: ${expense.id})`
                     }
                 </td>
                 <td style={{ minWidth: '40%' }}>
                     {activeEdit === expense.id ?
                         <Input
-                          value={expense.price}
+                          value={expense.amount}
                           onChange={(e) => {
                             const updatedExpense = { ...expense, price: Number(e.target.value) };
                             updateExpense(person, updatedExpense);
@@ -43,7 +43,7 @@ export function Expenses({
                           style={{ width: 'fit-content' }}
                         />
                         :
-                        expense.price
+                        expense.amount
                     }
                 </td>
                 <td style={{ display: 'flex', justifyContent: 'end', paddingTop: '11px' }}>
