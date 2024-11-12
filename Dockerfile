@@ -24,6 +24,13 @@ WORKDIR /app
 COPY --from=builder /app/build /app/build
 COPY --from=builder /app/package*.json ./
 
+# Set environment variables for production
+ENV NODE_ENV=production
+ENV DATABASE_PATH=/data/database.sqlite
+
+# Create /data directory for storing SQLite database file
+RUN mkdir -p /data
+
 # Install only production dependencies, including sqlite3
 RUN npm install --only=production
 
